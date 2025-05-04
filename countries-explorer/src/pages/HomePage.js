@@ -6,7 +6,7 @@ import {
   getAllCountries,
   getCountriesByName,
   getCountriesByRegion,
-} from "../services/api";
+} from "../service/api";
 
 const HomePage = () => {
   const [countries, setCountries] = useState([]);

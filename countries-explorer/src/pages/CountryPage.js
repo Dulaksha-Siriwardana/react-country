@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CountryDetail from "../components/CountryDetail";
-import { getCountryByCode } from "../services/api";
+import { getCountryByCode } from "../service/api";
 
 const CountryPage = () => {
   const { code } = useParams();
