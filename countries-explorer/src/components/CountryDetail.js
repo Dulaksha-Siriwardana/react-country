@@ -1,7 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CountryDetail = ({ country }) => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    // Simply navigate back to home page - no flag needed now
+    navigate("/");
+  };
+
   if (!country) return <div className="text-center py-10">Loading...</div>;
 
   // Format population with commas
@@ -12,8 +19,8 @@ const CountryDetail = ({ country }) => {
 
   return (
     <div className="p-4">
-      <Link
-        to="/"
+      <button
+        onClick={handleBack}
         className="inline-flex items-center px-4 py-2 bg-gray-200 rounded mb-8 hover:bg-gray-300"
       >
         <svg
@@ -29,7 +36,7 @@ const CountryDetail = ({ country }) => {
           />
         </svg>
         Back
-      </Link>
+      </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div>
