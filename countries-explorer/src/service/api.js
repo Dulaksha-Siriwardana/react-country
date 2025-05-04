@@ -14,3 +14,13 @@ export const getAllCountries = async () => {
     throw error;
   }
 };
+// Search countries by name
+export const getCountriesByName = async (name) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/name/${name}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error searching for "${name}":`, error);
+    return [];
+  }
+};
