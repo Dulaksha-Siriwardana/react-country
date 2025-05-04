@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import FilterBar from "../components/FilterBar";
 import CountryCard from "../components/CountryCard";
+import WelcomeForm from "../components/WelcomeForm";
+import { useUser } from "../context/UserContext";
 import {
   getAllCountries,
   getCountriesByName,
@@ -9,28 +12,47 @@ import {
 } from "../service/api";
 
 const HomePage = () => {
+  const { user } = useUser();
+  const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
-  // Fetch all countries when component mounts
+  // Handle user completion of welcome form
+  const handleWelcomeComplete = () => {
+    // Will trigger the useEffect to load countries
+    setInitialLoaded(true);
+  };
+
+  // Navigate to user's country page if they have completed the form
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllCountries();
-        setCountries(data);
-        setError(null);
-      } catch (err) {
-        setError("Failed to fetch countries. Please try again later.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (user && user.country && !initialLoaded) {
+      navigate(`/country/${user.country.cca3}`);
+      setInitialLoaded(true);
+    }
+  }, [user, initialLoaded, navigate]);
 
-    fetchData();
-  }, []);
+  // Fetch all countries when component mounts or after welcome form completion
+  useEffect(() => {
+    if (!user || initialLoaded) {
+      const fetchData = async () => {
+        try {
+          setLoading(true);
+          const data = await getAllCountries();
+          setCountries(data);
+          setError(null);
+        } catch (err) {
+          setError("Failed to fetch countries. Please try again later.");
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchData();
+    }
+  }, [user, initialLoaded]);
 
   // Handle search
   const handleSearch = async (searchTerm) => {
@@ -91,6 +113,15 @@ const HomePage = () => {
       setLoading(false);
     }
   };
+
+  // Show welcome form if user is not set
+  if (!user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <WelcomeForm onComplete={handleWelcomeComplete} />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
