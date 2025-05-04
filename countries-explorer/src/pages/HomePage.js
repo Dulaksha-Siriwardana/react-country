@@ -25,31 +25,33 @@ const HomePage = () => {
     setInitialLoaded(true);
   };
 
-  // Navigate to user's country page if they have completed the form
+  // Set initialLoaded to true when component mounts or when user is set
   useEffect(() => {
-    if (user && user.country && !initialLoaded) {
-      navigate(`/country/${user.country.cca3}`);
+    // Always set initialLoaded to true to ensure countries get fetched
+    if (!initialLoaded) {
       setInitialLoaded(true);
     }
-  }, [user, initialLoaded, navigate]);
+  }, [initialLoaded]);
 
-  // Fetch all countries when component mounts or after welcome form completion
+  // Fetch all countries when component mounts or after form completion
   useEffect(() => {
-    if (!user || initialLoaded) {
-      const fetchData = async () => {
-        try {
-          setLoading(true);
-          const data = await getAllCountries();
-          setCountries(data);
-          setError(null);
-        } catch (err) {
-          setError("Failed to fetch countries. Please try again later.");
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
-      };
+    // Always fetch countries data when on the home page
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllCountries();
+        setCountries(data);
+        setError(null);
+      } catch (err) {
+        setError("Failed to fetch countries. Please try again later.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    // If user exists or initialLoaded is true, fetch the countries
+    if (user || initialLoaded) {
       fetchData();
     }
   }, [user, initialLoaded]);
